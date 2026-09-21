@@ -1,47 +1,78 @@
-# Lección 12: Proyectos Finales
+# Lección 12 · Proyectos finales (nivel básico-intermedio)
 
-## 🎯 Proyectos para Practicar
+[![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/GeckCore/VScode/blob/main/leccion12-proyectos-finales/practica.ipynb)
 
-### Proyecto 1: Agenda de Contactos
-Crea una agenda que permita:
-- Agregar contactos
-- Buscar contactos
-- Eliminar contactos
-- Guardar en archivo
+## 🎯 Objetivos
 
-### Proyecto 2: Calculadora Avanzada
-Implementa una calculadora con:
-- Operaciones básicas
-- Historial de operaciones
-- Funciones científicas
+Esta lección no tiene teoría nueva: aquí **integras todo lo aprendido** (lecciones 1-11) en proyectos completos. Es donde de verdad se aprende a programar.
 
-### Proyecto 3: Juego Adivina el Número
-Versión completa con:
-- Dificultad seleccionable
-- Puntuación
-- Intentos limitados
+---
 
-### Proyecto 4: Gestor de Tareas
-Aplicación tipo TODO:
-- Agregar tareas
-- Marcar completadas
-- Filtrar por estado
-- Guardar en JSON
+## Cómo enfrentarte a un proyecto
 
-## 📝 Consejos Finales
+Antes de picar código, sigue este método (el mismo que usarás en la universidad y en el trabajo):
 
-1. **Practica diariamente**: La constancia es clave
-2. **Lee código de otros**: Aprende de proyectos open source
-3. **Contribuye**: Participa en proyectos reales
-4. **Nunca pares de aprender**: Python tiene mucho más por ofrecer
+1. **Entiende el problema.** Escríbelo con tus palabras. ¿Qué entra? ¿Qué sale?
+2. **Descompón.** Divide el proyecto en funciones pequeñas, cada una con una responsabilidad. Empieza por la más fácil.
+3. **Hazlo funcionar feo.** Una versión sencilla que funcione vale más que una elegante a medias.
+4. **Prueba a romperlo.** Introduce datos raros: textos donde van números, listas vacías, ceros…
+5. **Refactoriza.** Cuando funcione, limpia: buenos nombres, funciones cortas, sin código repetido, docstrings.
 
-## 🎉 ¡Felicidades!
+## Estructura recomendada para cada proyecto
 
-Has completado el curso básico de Python. ¡Sigue practicando y construyendo proyectos!
+```python
+# 1. DATOS / CONSTANTES
+ARCHIVO = "datos.json"
 
-## 📚 Recursos Adicionales
+# 2. FUNCIONES DE LÓGICA (sin input/print: devuelven valores)
+def cargar_datos(): ...
+def guardar_datos(datos): ...
+def operacion_principal(...): ...
 
-- [Documentación oficial de Python](https://docs.python.org/es/)
-- [Python para todos (Coursera)](https://www.coursera.org/specializations/python)
-- [Real Python](https://realpython.com/)
-- [LeetCode](https://leetcode.com/) - Para practicar algoritmos
+# 3. INTERFAZ DE USUARIO (aquí sí input/print)
+def menu(): ...
+
+# 4. PUNTO DE ENTRADA
+if __name__ == "__main__":
+    menu()
+```
+
+## Los proyectos
+
+En el notebook tienes **3 proyectos guiados** (esqueleto con las funciones a completar) y **1 proyecto libre**. Hazlos en este orden:
+
+### 🥉 Proyecto A — Gestor de tareas (To-Do)
+- Añadir, listar, completar y borrar tareas
+- Persistencia en JSON (lección 9)
+- Funciones + diccionarios/listas + excepciones
+
+### 🥈 Proyecto B — Quiz de preguntas
+- Preguntas con opciones almacenadas en una lista de diccionarios
+- Puntuación y porcentaje de aciertos
+- Validación de entradas robusta (lección 10)
+
+### 🥇 Proyecto C — Simulador de inventario de videojuego (POO)
+- Clases `Objeto`, `Inventario` y `Jugador`
+- Añadir/usar objetos, límite de peso, guardado en JSON
+- Demuestra dominio de la lección 8
+
+### 🏆 Proyecto D — Libre
+Elige uno: un juego del ahorcado, un conversor de divisas, un generador de contraseñas seguras, o un gestor de gastos. Aplícale el método de los 5 pasos.
+
+## Criterios de «proyecto bien hecho»
+
+| Criterio | Mínimo exigible |
+|----------|-----------------|
+| Funciona | No se rompe con entradas incorrectas |
+| Modular | Funciones cortas con una responsabilidad cada una |
+| Persistente | Guarda datos en archivo (JSON) |
+| Legible | snake_case, docstrings, código sin repetir |
+| Demo | Al ejecutarlo, se entiende qué hace sin leer el código |
+
+## 🏋️ Práctica
+
+[![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/GeckCore/VScode/blob/main/leccion12-proyectos-finales/practica.ipynb)
+
+## ➡️ Siguiente paso
+
+[Lección 13 · Estructuras de datos](../leccion13-estructuras-datos/)
