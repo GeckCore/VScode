@@ -1,329 +1,131 @@
-# Lección 13: Estructuras de Datos Avanzadas
+# Lección 13 · Estructuras de datos y complejidad
 
-## 📖 Introducción
+[![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/GeckCore/VScode/blob/main/leccion13-estructuras-datos/practica.ipynb)
 
-Python ofrece estructuras de datos poderosas más allá de listas y diccionarios básicos. Esta lección cubre:
+## 🎯 Objetivos
 
-- **Listas por comprensión** (list comprehensions)
-- **Diccionarios por comprensión**
-- **Generadores**
-- **Iteradores**
-- **Módulo collections**
+- Entender qué es la complejidad algorítmica (notación Big-O)
+- Usar pilas y colas correctamente
+- Conocer `deque`, `heapq`, `defaultdict` y `Counter`
+- Elegir la estructura adecuada para cada problema
 
-## 🎯 Listas por Comprensión
+Esta es la lección más «de carrera»: estructuras de datos y algoritmos son asignatura obligatoria en todo grado de informática.
 
-Una forma concisa de crear listas transformando iterables.
+---
 
-### Sintaxis básica
-```python
-# Forma tradicional
-cuadrados = []
-for i in range(10):
-    cuadrados.append(i ** 2)
+## 1. Big-O: ¿cuánto tarda mi programa cuando los datos crecen?
 
-# Con list comprehension
-cuadrados = [i ** 2 for i in range(10)]
-```
+La complejidad no mide segundos, mide **cómo crece el trabajo** al crecer la entrada `n`:
 
-### Con condición
-```python
-# Números pares del 1 al 20
-pares = [x for x in range(1, 21) if x % 2 == 0]
-# Resultado: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+| Notación | Nombre | Ejemplo en Python | Intuición |
+|----------|--------|-------------------|-----------|
+| O(1) | Constante | `lista[0]`, `dicc[clave]`, `x in set` | Da igual lo grande que sea |
+| O(log n) | Logarítmica | búsqueda binaria en lista ordenada | Cada paso descarta la mitad |
+| O(n) | Lineal | recorrer una lista, `x in lista` | Proporcional a n |
+| O(n log n) | | `sorted(lista)` | Ordenaciones buenas |
+| O(n²) | Cuadrática | doble bucle anidado sobre la misma lista | Con n=10⁵ ya duele |
 
-# Filtrar palabras con más de 5 letras
-palabras = ["casa", "elefante", "sol", "computadora"]
-largas = [p for p in palabras if len(p) > 5]
-# Resultado: ['elefante', 'computadora']
-```
+Reglas prácticas:
 
-### Anidadas
-```python
-# Tabla de multiplicar
-tabla = [[i * j for j in range(1, 11)] for i in range(1, 11)]
+- `x in lista` es O(n) (recorre todo); `x in set` / `x in diccionario` es O(1). **Si vas a hacer muchas búsquedas, usa un set.**
+- `lista.insert(0, x)` y `lista.pop(0)` son O(n) (desplazan todo); `append()`/`pop()` al final son O(1).
+- Dos bucles anidados sobre n elementos = O(n²). Con 10.000 elementos ya son 100 millones de operaciones.
 
-# Aplanar una matriz
-matriz = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-plana = [num for fila in matriz for num in fila]
-# Resultado: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-```
+## 2. Pila (stack): LIFO
 
-## 📚 Diccionarios por Comprensión
+«Último en entrar, primero en salir». Como una pila de platos. En Python: una lista con `append` y `pop`.
 
 ```python
-# Crear diccionario de cuadrados
-cuadrados = {x: x**2 for x in range(5)}
-# Resultado: {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
-
-# Filtrar diccionario
-precios = {"manzana": 1.5, "banana": 0.8, "uva": 2.5}
-caros = {k: v for k, v in precios.items() if v > 1}
-# Resultado: {"manzana": 1.5, "uva": 2.5}
-
-# Intercambiar claves y valores
-inverso = {v: k for k, v in precios.items()}
+pila = []
+pila.append("a")     # apilar
+pila.append("b")
+pila.append("c")
+print(pila.pop())    # "c"  ← sale el último que entró
 ```
 
-## ⚡ Generadores
+Usos: deshacer/rehacer (Ctrl+Z), historial del navegador, analizar paréntesis balanceados, llamadas de funciones (la *call stack*).
 
-Los generadores son funciones que retornan un iterable perezoso (lazy evaluation).
+## 3. Cola (queue): FIFO
 
-### Funciones generadoras
-```python
-def numeros_naturales():
-    """Genera números naturales infinitos"""
-    n = 0
-    while True:
-        yield n
-        n += 1
+«Primero en entrar, primero en salir». Como la cola del súper. ⚠️ No uses `lista.pop(0)` (es O(n)): usa `collections.deque`:
 
-# Uso
-gen = numeros_naturales()
-print(next(gen))  # 0
-print(next(gen))  # 1
-print(next(gen))  # 2
-
-# Iterar sobre el generador
-for i in numeros_naturales():
-    if i > 10:
-        break
-    print(i, end=" ")
-```
-
-### Expresiones generadoras
-Similar a list comprehension pero con paréntesis:
-
-```python
-# List comprehension (crea toda la lista en memoria)
-lista_cuadrados = [x**2 for x in range(1000000)]
-
-# Generator expression (calcula bajo demanda)
-gen_cuadrados = (x**2 for x in range(1000000))
-
-# Más eficiente para grandes volúmenes de datos
-suma_cuadrados = sum(x**2 for x in range(1000000))
-```
-
-### Ejemplo práctico: Lectura eficiente de archivos
-```python
-def leer_archivo_lineas(ruta):
-    """Generador que lee archivo línea por línea"""
-    with open(ruta, 'r') as f:
-        for linea in f:
-            yield linea.strip()
-
-# Uso eficiente de memoria
-for linea in leer_archivo_lineas("archivo_grande.txt"):
-    procesar(linea)
-```
-
-## 🔄 Iteradores Personalizados
-
-```python
-class ContadorInfinito:
-    """Iterador personalizado"""
-    
-    def __init__(self, inicio=0, paso=1):
-        self.actual = inicio
-        self.paso = paso
-    
-    def __iter__(self):
-        return self
-    
-    def __next__(self):
-        valor = self.actual
-        self.actual += self.paso
-        return valor
-
-# Uso
-contador = ContadorInfinito(inicio=10, paso=5)
-print(next(contador))  # 10
-print(next(contador))  # 15
-print(next(contador))  # 20
-```
-
-## 📦 Módulo collections
-
-### Counter - Contador especializado
-```python
-from collections import Counter
-
-texto = "hola mundo hola python hola"
-palabras = texto.split()
-
-contador = Counter(palabras)
-print(contador)  # Counter({'hola': 3, 'mundo': 1, 'python': 1})
-
-# Los 2 más comunes
-print(contador.most_common(2))  # [('hola', 3), ('mundo', 1)]
-```
-
-### defaultdict - Diccionario con valor por defecto
-```python
-from collections import defaultdict
-
-# Sin defaultdict
-dicc = {}
-for clave in ['a', 'b', 'a', 'c']:
-    if clave not in dicc:
-        dicc[clave] = []
-    dicc[clave].append(1)
-
-# Con defaultdict
-dicc_defecto = defaultdict(list)
-for clave in ['a', 'b', 'a', 'c']:
-    dicc_defecto[clave].append(1)
-# Resultado: {'a': [1, 1], 'b': [1], 'c': [1]}
-```
-
-### deque - Cola de dos extremos
 ```python
 from collections import deque
 
-cola = deque([1, 2, 3])
-cola.append(4)        # Agrega al final
-cola.appendleft(0)    # Agrega al inicio
-cola.pop()            # Elimina del final
-cola.popleft()        # Elimina del inicio
-
-# Ideal para colas FIFO y pilas LIFO
+cola = deque()
+cola.append("cliente1")     # llega
+cola.append("cliente2")
+print(cola.popleft())       # cliente1  ← sale el primero (O(1))
 ```
 
-### namedtuple - Tuplas con nombres
+`deque` añade y quita por **ambos extremos** en O(1): `append`/`appendleft`, `pop`/`popleft`.
+
+## 4. Montículo (heap): sacar siempre el mínimo
+
+`heapq` mantiene una lista donde extraer el mínimo es rapidísimo (O(log n)):
+
 ```python
-from collections import namedtuple
+import heapq
 
-# Definir tipo
-Persona = namedtuple('Persona', ['nombre', 'edad', 'ciudad'])
+tareas = []                       # guardamos tuplas (prioridad, nombre)
+heapq.heappush(tareas, (3, "pasear al perro"))
+heapq.heappush(tareas, (1, "estudiar"))
+heapq.heappush(tareas, (2, "comer"))
 
-# Crear instancia
-juan = Persona(nombre="Juan", edad=30, ciudad="Madrid")
-
-# Acceso por nombre (más legible)
-print(juan.nombre)  # Juan
-print(juan.edad)    # 30
-
-# Desempaquetado
-nombre, edad, ciudad = juan
+print(heapq.heappop(tareas))   # (1, 'estudiar') ← sale la más prioritaria
 ```
 
-## 🎯 Ejemplos Prácticos
+También: `heapq.nlargest(3, lista)` / `nsmallest(3, lista)` para los k mayores/menores sin ordenar todo.
 
-### Ejemplo 1: Procesamiento de datos con generadores
+## 5. defaultdict y Counter
+
 ```python
-def filtrar_pares(numeros):
-    """Generador que filtra solo pares"""
-    for n in numeros:
-        if n % 2 == 0:
-            yield n
+from collections import defaultdict, Counter
 
-def cuadrado(numeros):
-    """Generador que calcula cuadrados"""
-    for n in numeros:
-        yield n ** 2
+# defaultdict: valores por defecto automáticos, sin .get()
+grupos = defaultdict(list)
+for nombre, equipo in [("Ana", "rojo"), ("Luis", "azul"), ("Bea", "rojo")]:
+    grupos[equipo].append(nombre)
+print(dict(grupos))   # {'rojo': ['Ana', 'Bea'], 'azul': ['Luis']}
 
-# Pipeline de procesamiento
-datos = range(100)
-resultado = list(cuadrado(filtrar_pares(datos)))
-print(sum(resultado))  # Suma de cuadrados de pares
+# Counter: el patrón contador de la lección 7, ya hecho
+votos = Counter(["ana", "luis", "ana", "bea", "ana"])
+print(votos.most_common(2))   # [('ana', 3), ('luis', 1)]
 ```
 
-### Ejemplo 2: Análisis de texto avanzado
-```python
-from collections import Counter, defaultdict
+## 6. ¿Qué estructura uso? Guía de decisión
 
-def analizar_texto(texto):
-    """Analiza frecuencia de palabras y letras"""
-    palabras = texto.lower().split()
-    
-    # Frecuencia de palabras
-    freq_palabras = Counter(palabras)
-    
-    # Frecuencia de letras
-    letras = [l for palabra in palabras for l in palabra if l.isalpha()]
-    freq_letras = Counter(letras)
-    
-    # Palabras por longitud
-    por_longitud = defaultdict(list)
-    for palabra in set(palabras):
-        por_longitud[len(palabra)].append(palabra)
-    
-    return {
-        'palabras_comunes': freq_palabras.most_common(5),
-        'letras_comunes': freq_letras.most_common(5),
-        'por_longitud': dict(por_longitud)
-    }
+| Necesito... | Uso... |
+|-------------|--------|
+| Colección ordenada que cambia | `list` |
+| Datos fijos que no deben cambiar | `tuple` |
+| Buscar por clave / contar | `dict` (o `Counter`) |
+| Unicidad y pertenencia rápida | `set` |
+| Deshacer/último en entrar | pila = `list` con append/pop |
+| Cola de espera | `deque` |
+| Prioridades / «el menor siempre» | `heapq` |
+| Agrupar elementos | `defaultdict(list)` |
 
-texto = "Python es increíble Python es poderoso Python es genial"
-analisis = analizar_texto(texto)
-print(analisis['palabras_comunes'])
-```
+---
 
-### Ejemplo 3: Sistema de caché con OrderedDict
-```python
-from collections import OrderedDict
+## ⚠️ Errores típicos
 
-class CacheLRU:
-    """Caché con política Least Recently Used"""
-    
-    def __init__(self, capacidad):
-        self.capacidad = capacidad
-        self.cache = OrderedDict()
-    
-    def get(self, clave):
-        if clave in self.cache:
-            # Mover al final (más reciente)
-            self.cache.move_to_end(clave)
-            return self.cache[clave]
-        return None
-    
-    def put(self, clave, valor):
-        if clave in self.cache:
-            self.cache.move_to_end(clave)
-        self.cache[clave] = valor
-        
-        if len(self.cache) > self.capacidad:
-            # Eliminar el menos reciente (primero)
-            self.cache.popitem(last=False)
+1. Usar listas como colas con `pop(0)`: lento y mala práctica.
+2. Comprobar pertenencia en una lista dentro de un bucle (O(n²) disfrazado): conviértela a `set` primero.
+3. Ordenar todo para sacar el máximo: `max()` es O(n), `sorted()` O(n log n).
+4. Creer que `heapq` mantiene la lista ordenada: solo garantiza que el mínimo sale primero.
 
-# Uso
-cache = CacheLRU(2)
-cache.put('a', 1)
-cache.put('b', 2)
-cache.put('c', 3)  # Elimina 'a'
-print(cache.get('b'))  # 2
-print(cache.get('a'))  # None (fue eliminado)
-```
+## 📝 Resumen
 
-## 📝 Ejercicios
+- Big-O describe el crecimiento: O(1) ≪ O(log n) ≪ O(n) ≪ O(n log n) ≪ O(n²).
+- Pila LIFO con list; cola FIFO con `deque`; prioridades con `heapq`.
+- `Counter` y `defaultdict` eliminan patrones repetitivos.
+- La estructura correcta suele importar más que el código listo.
 
-### Ejercicio 13.1: List comprehension avanzado
-Crea una lista con todos los números del 1 al 100 que sean divisibles por 3 y 5 simultáneamente.
+## 🏋️ Práctica
 
-### Ejercicio 13.2: Generador de Fibonacci
-Crea un generador que produzca la secuencia de Fibonacci infinita.
+[![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/GeckCore/VScode/blob/main/leccion13-estructuras-datos/practica.ipynb)
 
-### Ejercicio 13.3: Analizador de logs
-Usa `Counter` y `defaultdict` para analizar un archivo de logs y encontrar:
-- Las 5 IPs más frecuentes
-- Errores por tipo
-- Requests por hora
+## ➡️ Siguiente paso
 
-### Ejercicio 13.4: Iterador de rango personalizado
-Crea un iterador que genere números primos infinitos.
-
-## ✅ Soluciones
-
-Las soluciones están en la carpeta `soluciones/solucion_13_*.py`.
-
-## 🔍 Test de Autoevaluación
-
-1. ¿Cuál es la diferencia entre list comprehension y generator expression?
-2. ¿Qué hace la palabra clave `yield`?
-3. ¿Cuándo usarías `defaultdict` en lugar de `dict` normal?
-4. ¿Qué ventaja tiene `deque` sobre una lista para colas?
-5. ¿Cómo funciona `namedtuple` y cuándo es útil?
-
-## ➡️ Siguiente Lección
-
-Continúa con la [Lección 14: Funciones Avanzadas](../leccion14-funciones-avanzadas/)
+[Lección 14 · Funciones avanzadas](../leccion14-funciones-avanzadas/)

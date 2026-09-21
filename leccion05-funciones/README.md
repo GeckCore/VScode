@@ -1,299 +1,166 @@
-# Lección 05: Funciones
+# Lección 5 · Funciones
 
-## 📖 ¿Qué es una Función?
+[![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/GeckCore/VScode/blob/main/leccion05-funciones/practica.ipynb)
 
-Una función es un bloque de código reutilizable que realiza una tarea específica. Las funciones permiten:
-- **Organizar** el código en partes lógicas
-- **Reutilizar** código sin duplicarlo
-- **Mantener** el código más fácilmente
+## 🎯 Objetivos
 
-## 🎯 Definición de Funciones
+- Crear funciones con `def` y llamarlas
+- Pasar datos con parámetros y recibir resultados con `return`
+- Entender el alcance (scope) de las variables
+- Usar valores por defecto y argumentos con nombre
+- Escribir funciones bien documentadas
 
-### Sintaxis básica
+---
+
+## 1. ¿Por qué funciones?
+
+Una función es un **bloque de código con nombre** que puedes ejecutar cuando quieras, tantas veces como quieras. Sin funciones, los programas serían listas infinitas de instrucciones repetidas. Las funciones te dan:
+
+- **Reutilización**: escribes la lógica una vez, la usas cien.
+- **Organización**: cada función hace una cosa y la hace bien.
+- **Legibilidad**: `calcular_iva(precio)` se entiende mejor que 5 líneas sueltas.
+
+Ya has usado funciones: `print()`, `input()`, `len()`, `int()`… Ahora aprenderás a crear las tuyas.
+
+## 2. Definir y llamar
+
 ```python
-def nombre_funcion():
-    """Docstring - descripción de la función"""
-    # Código de la función
-    return resultado
+def saludar():              # def + nombre + () + :
+    print("¡Hola!")         # cuerpo con sangría
+
+saludar()                   # llamada: ejecuta el cuerpo
+saludar()                   # puedes llamarla mil veces
 ```
 
-### Ejemplo simple
-```python
-def saludar():
-    """Imprime un saludo"""
-    print("¡Hola! Bienvenido a Python")
+⚠️ Definir una función **no la ejecuta**. Solo cuando la **llamas** (`nombre()`) corre su código.
 
-# Llamar a la función
-saludar()  # ¡Hola! Bienvenido a Python
+## 3. Parámetros: datos de entrada
+
+Los parámetros son variables que recibe la función:
+
+```python
+def saludar(nombre):            # nombre es un parámetro
+    print(f"¡Hola, {nombre}!")
+
+saludar("Ana")      # ¡Hola, Ana!
+saludar("Carlos")   # ¡Hola, Carlos!
 ```
 
-## 📝 Parámetros y Argumentos
+Puedes tener varios, separados por comas:
 
-### Parámetros posicionales
 ```python
-def saludar_persona(nombre):
-    """Saluda a una persona por su nombre"""
-    print(f"¡Hola {nombre}!")
+def area_rectangulo(base, altura):
+    print(base * altura)
 
-saludar_persona("María")  # ¡Hola María!
-saludar_persona("Juan")   # ¡Hola Juan!
+area_rectangulo(3, 4)   # 12
 ```
 
-### Múltiples parámetros
-```python
-def sumar(a, b):
-    """Suma dos números"""
-    resultado = a + b
-    print(f"{a} + {b} = {resultado}")
+## 4. `return`: datos de salida
 
-sumar(5, 3)  # 5 + 3 = 8
-```
-
-### Valor por defecto
-```python
-def saludar(nombre="Invitado"):
-    """Saluda con nombre opcional"""
-    print(f"¡Hola {nombre}!")
-
-saludar()              # ¡Hola Invitado!
-saludar("Ana")         # ¡Hola Ana!
-```
-
-### Parámetros nombrados (keyword arguments)
-```python
-def describir_mascota(nombre, especie="perro"):
-    """Describe una mascota"""
-    print(f"{nombre} es un {especie}")
-
-describir_mascota("Firulais")                    # Firulais es un perro
-describir_mascota(especie="gato", nombre="Michi")  # Michi es un gato
-```
-
-## 🔄 Retorno de Valores
-
-### Return simple
-```python
-def cuadrado(numero):
-    """Devuelve el cuadrado de un número"""
-    return numero ** 2
-
-resultado = cuadrado(5)
-print(resultado)  # 25
-```
-
-### Múltiples retornos
-```python
-def operaciones(num1, num2):
-    """Devuelve suma y resta"""
-    suma = num1 + num2
-    resta = num1 - num2
-    return suma, resta
-
-s, r = operaciones(10, 4)
-print(f"Suma: {s}, Resta: {r}")  # Suma: 16, Resta: 6
-
-# También se puede recibir como tupla
-resultado = operaciones(10, 4)
-print(resultado)  # (16, 6)
-```
-
-## 📚 Tipos de Funciones
-
-### Funciones sin parámetros ni retorno
-```python
-def mostrar_menu():
-    print("=== MENÚ ===")
-    print("1. Opción 1")
-    print("2. Opción 2")
-```
-
-### Funciones con parámetros pero sin retorno
-```python
-def imprimir_tabla(numero):
-    for i in range(1, 11):
-        print(f"{numero} x {i} = {numero * i}")
-```
-
-### Funciones con parámetros y retorno
-```python
-def calcular_area(base, altura):
-    return base * altura
-```
-
-### Funciones con parámetros variables (*args)
-```python
-def sumar_todos(*numeros):
-    """Suma cualquier cantidad de números"""
-    return sum(numeros)
-
-print(sumar_todos(1, 2, 3))        # 6
-print(sumar_todos(1, 2, 3, 4, 5))  # 15
-```
-
-### Funciones con parámetros nombrados variables (**kwargs)
-```python
-def mostrar_info(**datos):
-    """Muestra información con nombres variables"""
-    for clave, valor in datos.items():
-        print(f"{clave}: {valor}")
-
-mostrar_info(nombre="Juan", edad=30, ciudad="Madrid")
-```
-
-## 🎯 Ámbito de Variables (Scope)
-
-### Variable local
-```python
-def mi_funcion():
-    variable_local = "Soy local"
-    print(variable_local)
-
-mi_funcion()
-# print(variable_local)  # Error: no existe fuera de la función
-```
-
-### Variable global
-```python
-variable_global = "Soy global"
-
-def mi_funcion():
-    print(variable_global)  # Se puede acceder
-
-mi_funcion()
-print(variable_global)  # También fuera
-```
-
-### Modificar variable global
-```python
-contador = 0
-
-def incrementar():
-    global contador
-    contador += 1
-
-incrementar()
-print(contador)  # 1
-```
-
-## 📝 Funciones Lambda
-
-Funciones anónimas de una sola línea:
+Esto es lo más importante de la lección. Una función puede **devolver** un valor con `return`, y quien la llama puede guardarlo:
 
 ```python
-# Forma tradicional
 def cuadrado(x):
-    return x ** 2
+    return x * x
 
-# Forma lambda
-cuadrado = lambda x: x ** 2
-
-print(cuadrado(5))  # 25
+resultado = cuadrado(5)     # guarda 25 en resultado
+print(cuadrado(3) + 1)      # puedes usar el valor al momento: 10
 ```
 
-**Ejemplos:**
+**`print` vs `return` — la confusión número 1:**
+
+- `print()` **muestra** algo en pantalla (efecto visual, no reutilizable).
+- `return` **devuelve** un valor que el programa puede seguir usando.
+
 ```python
-suma = lambda a, b: a + b
-mayor = lambda a, b: a if a > b else b
+def suma_mala(a, b):
+    print(a + b)        # solo lo muestra; no puedes hacer nada con él
 
-print(suma(3, 5))    # 8
-print(mayor(3, 5))   # 5
+def suma_buena(a, b):
+    return a + b        # devuelve el valor
+
+doble = suma_buena(3, 4) * 2   # 14 ✅
+# doble = suma_mala(3, 4) * 2  # ❌ TypeError: suma_mala devuelve None
 ```
 
-## 🎯 Ejemplos Prácticos
+Regla profesional: las funciones **devuelven** datos; quien las usa decide si los imprime. Y ojo: una función sin `return` devuelve siempre `None`. Además, `return` termina la función al instante: lo que haya debajo no se ejecuta.
 
-### Ejemplo 1: Calculadora modular
+## 5. Alcance (scope): variables locales
+
+Las variables creadas **dentro** de una función son **locales**: existen solo mientras la función corre y no se ven desde fuera.
+
 ```python
-def sumar(a, b):
-    return a + b
+def calcular():
+    resultado = 42      # local
 
-def restar(a, b):
-    return a - b
-
-def multiplicar(a, b):
-    return a * b
-
-def dividir(a, b):
-    if b != 0:
-        return a / b
-    return None
-
-# Uso
-print(sumar(5, 3))      # 8
-print(dividir(10, 2))   # 5.0
+calcular()
+# print(resultado)      # ❌ NameError: no existe fuera
 ```
 
-### Ejemplo 2: Validador de email
+Las variables de fuera sí se pueden **leer** dentro, pero no deberías depender de eso: pasa los datos por parámetros. Es lo que hace a las funciones predecibles y fáciles de probar. La técnica de evitar `global` se considera buena práctica a nivel ingeniería.
+
+## 6. Valores por defecto y argumentos con nombre
+
 ```python
-def validar_email(email):
-    """Verifica si un email tiene formato válido"""
-    if "@" not in email:
-        return False
-    if "." not in email:
-        return False
-    if len(email) < 5:
-        return False
-    return True
+def saludar(nombre, saludo="Hola"):
+    print(f"{saludo}, {nombre}")
 
-# Tests
-print(validar_email("juan@email.com"))  # True
-print(validar_email("invalido"))        # False
+saludar("Ana")                    # Hola, Ana
+saludar("Ana", "Buenas")          # Buenas, Ana
+saludar(saludo="Ey", nombre="Ana")  # con nombre, el orden da igual
 ```
 
-### Ejemplo 3: Formateador de texto
+## 7. `*args` y `**kwargs` (nivel avanzado)
+
+Para funciones con número variable de argumentos:
+
 ```python
-def formatear_nombre(nombre, apellido, mayusculas=False):
-    """Formatea nombre completo"""
-    completo = f"{nombre} {apellido}"
-    
-    if mayusculas:
-        return completo.upper()
-    
-    return completo.title()
+def sumar_todo(*numeros):        # recoge todos los argumentos en una tupla
+    total = 0
+    for n in numeros:
+        total += n
+    return total
 
-print(formatear_nombre("juan", "pérez"))           # Juan Pérez
-print(formatear_nombre("juan", "pérez", True))     # JUAN PÉREZ
+print(sumar_todo(1, 2, 3, 4))    # 10
 ```
 
-## 📚 Ejercicios
+## 8. Documentar: docstrings
 
-### Ejercicio 5.1: Saludo personalizado
-Crea una función `saludar(nombre)` que reciba un nombre e imprima "¡Hola [nombre]!".
+La primera línea de una función puede ser un texto entre triples comillas que la documenta:
 
-**Archivo**: `ejercicios/ejercicio_05_01.py`
+```python
+def iva(precio, tasa=0.07):
+    """Calcula el precio con IVA.
 
-### Ejercicio 5.2: Máximo de tres números
-Crea una función `maximo_tres(a, b, c)` que devuelva el mayor de tres números.
+    precio: precio base (float)
+    tasa: porcentaje de IVA (por defecto 7%, el IGIC canario)
+    devuelve: precio final con IVA
+    """
+    return precio * (1 + tasa)
+```
 
-**Archivo**: `ejercicios/ejercicio_05_02.py`
+---
 
-### Ejercicio 5.3: Contar letras
-Crea una función `contar_letras(palabra)` que devuelva la longitud de una palabra.
+## ⚠️ Errores típicos
 
-**Archivo**: `ejercicios/ejercicio_05_03.py`
+1. Imprimir en vez de devolver: si un ejercicio dice «devuelve», usa `return`.
+2. Olvidar los paréntesis al llamar: `saludar` es la función; `saludar()` la ejecuta.
+3. Usar una variable local fuera de su función.
+4. Definir la función **después** de llamarla: Python lee de arriba abajo.
+5. Un parámetro por defecto como lista (`def f(x=[])`) crea bugs raros; usa `None` y créala dentro (lo entenderás en la lección 6).
 
-### Ejercicio 5.4: Es palíndromo
-Crea una función `es_palindromo(texto)` que verifique si un texto se lee igual al revés.
+## 📝 Resumen
 
-**Archivo**: `ejercicios/ejercicio_05_04.py`
+- `def nombre(parámetros):` define; `nombre(valores)` llama.
+- `return` devuelve un valor y termina la función. Sin `return` → devuelve `None`.
+- Las variables locales viven solo dentro de la función.
+- Valores por defecto y argumentos con nombre hacen funciones flexibles.
+- Documenta con docstrings.
 
-### Ejercicio 5.5: Generador de contraseña
-Crea una función `generar_password(longitud)` que genere una contraseña aleatoria.
+## 🏋️ Práctica
 
-**Archivo**: `ejercicios/ejercicio_05_05.py`
+[![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/GeckCore/VScode/blob/main/leccion05-funciones/practica.ipynb)
 
-## ✅ Soluciones
+## ➡️ Siguiente paso
 
-Las soluciones están en la carpeta `soluciones/`.
-
-## 🔍 Test de Autoevaluación
-
-1. ¿Qué palabra clave se usa para definir una función?
-2. ¿Qué hace `return` en una función?
-3. ¿Cómo se define un parámetro con valor por defecto?
-4. ¿Qué es `*args`?
-5. ¿Qué es una función lambda?
-6. ¿Qué diferencia hay entre variable local y global?
-
-## ➡️ Siguiente Lección
-
-Continúa con la [Lección 06: Listas y Tuplas](../leccion06-listas-tuplas/)
+[Lección 6 · Listas y tuplas](../leccion06-listas-tuplas/)

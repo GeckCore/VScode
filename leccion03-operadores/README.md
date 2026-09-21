@@ -1,278 +1,151 @@
-# Lección 03: Operadores
+# Lección 3 · Operadores
 
-## 📖 ¿Qué son los Operadores?
+[![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/GeckCore/VScode/blob/main/leccion03-operadores/practica.ipynb)
 
-Los operadores son símbolos que realizan operaciones sobre variables y valores. Python tiene varios tipos de operadores.
+## 🎯 Objetivos
 
-## 🎯 Tipos de Operadores
+- Dominar los operadores aritméticos, incluidos `//` y `%` que se usan muchísimo
+- Comparar valores con operadores de comparación
+- Combinar condiciones con `and`, `or`, `not`
+- Entender la precedencia (qué se calcula primero)
 
-### 1. Operadores Aritméticos
+---
 
-Realizan operaciones matemáticas básicas:
+## 1. Operadores aritméticos
 
-| Operador | Descripción | Ejemplo | Resultado |
-|----------|-------------|---------|-----------|
-| `+` | Suma | `5 + 3` | `8` |
-| `-` | Resta | `5 - 3` | `2` |
-| `*` | Multiplicación | `5 * 3` | `15` |
-| `/` | División (float) | `5 / 2` | `2.5` |
-| `//` | División entera | `5 // 2` | `2` |
-| `%` | Módulo (resto) | `5 % 2` | `1` |
-| `**` | Potencia | `5 ** 2` | `25` |
+| Operador | Qué hace | Ejemplo | Resultado |
+|----------|----------|---------|-----------|
+| `+` | Suma | `3 + 2` | `5` |
+| `-` | Resta | `3 - 2` | `1` |
+| `*` | Multiplicación | `3 * 2` | `6` |
+| `/` | División (siempre float) | `7 / 2` | `3.5` |
+| `//` | División entera (sin decimales) | `7 // 2` | `3` |
+| `%` | Resto de la división | `7 % 2` | `1` |
+| `**` | Potencia | `2 ** 10` | `1024` |
 
-**Ejemplos:**
+### La división siempre da float
+
 ```python
-a = 10
-b = 3
-
-print(a + b)   # 13
-print(a - b)   # 7
-print(a * b)   # 30
-print(a / b)   # 3.333...
-print(a // b)  # 3 (solo parte entera)
-print(a % b)   # 1 (resto de la división)
-print(a ** b)  # 1000 (10 al cubo)
+print(10 / 5)    # 2.0, no 2
+print(10 // 5)   # 2     (división entera)
 ```
 
-### 2. Operadores de Comparación
+### `%` (módulo): el operador estrella
 
-Comparan valores y devuelven un booleano (`True` o `False`):
+`a % b` es el **resto** de dividir `a` entre `b`. Sus usos clásicos:
 
-| Operador | Descripción | Ejemplo | Resultado |
-|----------|-------------|---------|-----------|
-| `==` | Igual a | `5 == 5` | `True` |
-| `!=` | Diferente de | `5 != 3` | `True` |
-| `>` | Mayor que | `5 > 3` | `True` |
-| `<` | Menor que | `5 < 3` | `False` |
-| `>=` | Mayor o igual | `5 >= 5` | `True` |
-| `<=` | Menor o igual | `5 <= 3` | `False` |
-
-**Ejemplos:**
 ```python
-edad = 18
-tiene_permiso = edad >= 18  # True
-
-precio = 100
-es_gratis = precio == 0     # False
-
-nombre = "Ana"
-es_ana = nombre == "Ana"    # True
+10 % 2 == 0     # True → 10 es par
+7 % 2 == 1      # True → 7 es impar
+minutos = 135
+horas = minutos // 60      # 2
+resto = minutos % 60       # 15 → 135 min = 2 h 15 min
 ```
 
-### 3. Operadores Lógicos
+Si `a % b == 0`, entonces `b` divide exactamente a `a` (¡clave para problemas de divisibilidad!).
 
-Combinan expresiones booleanas:
+## 2. Operadores de comparación
 
-| Operador | Descripción | Ejemplo | Resultado |
-|----------|-------------|---------|-----------|
-| `and` | Y lógico | `True and False` | `False` |
-| `or` | O lógico | `True or False` | `True` |
-| `not` | Negación | `not True` | `False` |
+Devuelven un **booleano** (`True`/`False`):
 
-**Tablas de verdad:**
+| Operador | Significado | Ejemplo |
+|----------|-------------|---------|
+| `==` | igual a | `5 == 5` → `True` |
+| `!=` | distinto de | `5 != 3` → `True` |
+| `>` , `<` | mayor / menor | `7 > 3` → `True` |
+| `>=` , `<=` | mayor o igual / menor o igual | `18 >= 18` → `True` |
 
-**AND:**
-- `True and True` → `True`
-- `True and False` → `False`
-- `False and True` → `False`
-- `False and False` → `False`
+⚠️ **El error número 1 de los principiantes**: confundir `=` (asignar) con `==` (comparar).
 
-**OR:**
-- `True or True` → `True`
-- `True or False` → `True`
-- `False or True` → `True`
-- `False or False` → `False`
-
-**Ejemplos:**
 ```python
-edad = 25
-tiene_dinero = True
-
-puede_comprar = edad >= 18 and tiene_dinero  # True
-
-dia = "sábado"
-es_finde = dia == "sábado" or dia == "domingo"  # True
-
-llueve = False
-no_llueve = not llueve  # True
+x = 5        # guarda 5 en x
+x == 5       # pregunta: ¿x vale 5? → True
 ```
 
-### 4. Operadores de Asignación
+Las comparaciones también funcionan con texto (orden alfabético):
 
-Asignan valores a variables:
-
-| Operador | Ejemplo | Equivalente a |
-|----------|---------|---------------|
-| `=` | `x = 5` | `x = 5` |
-| `+=` | `x += 3` | `x = x + 3` |
-| `-=` | `x -= 3` | `x = x - 3` |
-| `*=` | `x *= 3` | `x = x * 3` |
-| `/=` | `x /= 3` | `x = x / 3` |
-| `%=` | `x %= 3` | `x = x % 3` |
-| `**=` | `x **= 3` | `x = x ** 3` |
-
-**Ejemplos:**
 ```python
-contador = 0
-contador += 1  # contador = 1
-contador += 1  # contador = 2
-
-precio = 100
-precio *= 1.21  # precio = 121.0 (con IVA)
-
-numero = 10
-numero %= 3     # numero = 1 (resto de 10/3)
+"ana" < "bea"     # True (a va antes que b)
+"Ana" == "ana"    # False (mayúsculas ≠ minúsculas)
 ```
 
-### 5. Operadores de Identidad
+## 3. Operadores lógicos: `and`, `or`, `not`
 
-Comprueban si dos variables apuntan al mismo objeto:
+Sirven para combinar condiciones:
 
-| Operador | Descripción |
-|----------|-------------|
-| `is` | Es el mismo objeto |
-| `is not` | No es el mismo objeto |
-
-**Ejemplo:**
 ```python
-a = [1, 2, 3]
-b = [1, 2, 3]
-c = a
+edad = 20
+tiene_dni = True
 
-print(a == b)      # True (mismo valor)
-print(a is b)      # False (objetos diferentes)
-print(a is c)      # True (misma referencia)
-print(a is not b)  # True
+print(edad >= 18 and tiene_dni)   # True  (las dos deben cumplirse)
+print(edad < 18 or tiene_dni)     # True  (basta con una)
+print(not tiene_dni)              # False (invierte)
 ```
 
-### 6. Operadores de Pertenencia
+Tabla de verdad rápida:
 
-Comprueban si un valor está en una secuencia:
+| `a` | `b` | `a and b` | `a or b` |
+|-----|-----|-----------|----------|
+| True | True | True | True |
+| True | False | False | True |
+| False | False | False | False |
 
-| Operador | Descripción |
-|----------|-------------|
-| `in` | Está contenido |
-| `not in` | No está contenido |
+Truco mental: `and` es exigente (todo debe ser verdad), `or` es flexible (basta una cosa), `not` niega.
 
-**Ejemplos:**
+## 4. Precedencia: ¿qué se calcula primero?
+
+Orden de prioridad (de mayor a menor):
+
+1. Paréntesis `()`
+2. Potencia `**`
+3. `*`, `/`, `//`, `%`
+4. `+`, `-`
+5. Comparaciones (`==`, `<`...)
+6. `not`, luego `and`, luego `or`
+
 ```python
-frutas = ["manzana", "banana", "naranja"]
-
-print("banana" in frutas)      # True
-print("uva" in frutas)         # False
-print("uva" not in frutas)     # True
-
-texto = "Hola Mundo"
-print("H" in texto)            # True
-print("z" not in texto)        # True
+print(2 + 3 * 4)        # 14 (primero 3*4)
+print((2 + 3) * 4)      # 20 (los paréntesis mandan)
+print(not True and False)  # False: primero not True → False, luego False and False
 ```
 
-## 🎯 Ejemplos Prácticos
+**Regla profesional**: cuando dudes, pon paréntesis. Código claro > código listillo.
 
-### Ejemplo 1: Calculadora completa
+## 5. Valores «verdaderos» y «falsos» (truthy/falsy)
+
+En Python, casi todo se puede interpretar como verdadero o falso:
+
+- Falsos (`falsy`): `0`, `0.0`, `""` (texto vacío), `None`, listas/diccionarios vacíos
+- El resto: verdaderos (`truthy`)
+
 ```python
-# Calculadora con todos los operadores
-a = 10
-b = 3
-
-print(f"Suma: {a} + {b} = {a + b}")
-print(f"Resta: {a} - {b} = {a - b}")
-print(f"Multiplicación: {a} * {b} = {a * b}")
-print(f"División: {a} / {b} = {a / b}")
-print(f"División entera: {a} // {b} = {a // b}")
-print(f"Módulo: {a} % {b} = {a % b}")
-print(f"Potencia: {a} ** {b} = {a ** b}")
+nombre = ""
+if nombre:          # equivale a "si nombre no está vacío"
+    print("Hola")
+else:
+    print("No escribiste nada")
 ```
 
-### Ejemplo 2: Verificador de acceso
-```python
-# Sistema de acceso
-usuario_correcto = "admin"
-password_correcto = "1234"
+---
 
-usuario = input("Usuario: ")
-password = input("Password: ")
+## ⚠️ Errores típicos
 
-acceso_concedido = usuario == usuario_correcto and password == password_correcto
+1. Escribir `x = 5 == 5` queriendo comparar: guarda `True` en `x`.
+2. Esperar que `10 / 2` dé un entero: da `5.0`.
+3. Escribir condiciones como `18 <= edad < 30`... ¡es correcto en Python! (a diferencia de otros lenguajes). Aprovéchalo.
+4. `if edad = 18:` → `SyntaxError`: en las condiciones va `==`.
 
-print(f"Acceso concedido: {acceso_concedido}")
-```
+## 📝 Resumen
 
-### Ejemplo 3: Descuento por edad y membresía
-```python
-# Cálculo de descuento
-edad = 70
-es_miembro = True
-precio_base = 100
+- `/` divide con decimales, `//` da el cociente entero, `%` da el resto.
+- Comparar (`==`, `!=`, `<`, `>`...) produce booleanos.
+- `and`/`or`/`not` combinan condiciones; `and` antes que `or`.
+- Usa paréntesis para que la intención sea obvia.
 
-# Descuento por edad (mayores de 65)
-descuento_edad = edad >= 65
+## 🏋️ Práctica
 
-# Descuento por membresía
-descuento_membresia = es_miembro
+[![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/GeckCore/VScode/blob/main/leccion03-operadores/practica.ipynb)
 
-# Aplicar descuentos
-if descuento_edad:
-    precio_base *= 0.9  # 10% descuento
+## ➡️ Siguiente paso
 
-if descuento_membresia:
-    precio_base *= 0.95  # 5% descuento adicional
-
-print(f"Precio final: ${precio_base:.2f}")
-```
-
-## 📚 Ejercicios
-
-### Ejercicio 3.1: Calculadora de IMC
-Crea un programa que calcule el Índice de Masa Corporal:
-- Fórmula: IMC = peso / (altura ** 2)
-- Pide peso en kg y altura en metros
-- Muestra el resultado con 2 decimales
-
-**Archivo**: `ejercicios/ejercicio_03_01.py`
-
-### Ejercicio 3.2: Verificador de año bisiesto
-Un año es bisiesto si:
-- Es divisible por 4 Y no por 100, O
-- Es divisible por 400
-
-Crea un programa que pida un año y diga si es bisiesto.
-
-**Archivo**: `ejercicios/ejercicio_03_02.py`
-
-### Ejercicio 3.3: Operaciones combinadas
-Dados dos números ingresados por el usuario, muestra:
-- Suma, resta, multiplicación, división
-- División entera y módulo
-- Potencia del primero elevado al segundo
-
-**Archivo**: `ejercicios/ejercicio_03_03.py`
-
-### Ejercicio 3.4: Validador de rango
-Pide un número y verifica si está entre 1 y 100 (inclusive).
-Muestra `True` si está en el rango, `False` si no.
-
-**Archivo**: `ejercicios/ejercicio_03_04.py`
-
-### Ejercicio 3.5: Buscador de caracteres
-Pide una frase y una letra.
-Verifica si la letra está en la frase (usa `in`).
-
-**Archivo**: `ejercicios/ejercicio_03_05.py`
-
-## ✅ Soluciones
-
-Las soluciones están en la carpeta `soluciones/`.
-
-## 🔍 Test de Autoevaluación
-
-1. ¿Qué operador se usa para división entera?
-2. ¿Qué devuelve `5 % 2`?
-3. ¿Cuál es la diferencia entre `=` y `==`?
-4. ¿Qué devuelve `True and False`?
-5. ¿Qué operador verifica si un elemento está en una lista?
-6. ¿Qué hace `x += 5`?
-
-## ➡️ Siguiente Lección
-
-Continúa con la [Lección 04: Estructuras de Control](../leccion04-estructuras-control/)
+[Lección 4 · Estructuras de control](../leccion04-estructuras-control/)

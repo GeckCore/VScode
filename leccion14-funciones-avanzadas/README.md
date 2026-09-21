@@ -1,436 +1,164 @@
-# Lección 14: Funciones Avanzadas
+# Lección 14 · Funciones avanzadas
 
-## 📖 Introducción
+[![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/GeckCore/VScode/blob/main/leccion14-funciones-avanzadas/practica.ipynb)
 
-Esta lección explora características avanzadas de funciones en Python:
+## 🎯 Objetivos
 
-- **Funciones lambda**
-- **Funciones de orden superior**
-- **Decoradores**
-- **Funciones map, filter, reduce**
-- **Closures**
-- **Recursividad avanzada**
+- Usar funciones como datos: lambdas, `map`, `filter`
+- Entender iteradores y crear generadores con `yield`
+- Escribir decoradores
+- Comprender closures
 
-## 🎯 Funciones Lambda
+Estos conceptos separan a quien «escribe Python» de quien **piensa en Python**. Son material de 2º de carrera y de entrevistas técnicas.
 
-Funciones anónimas pequeñas definidas con la palabra clave `lambda`.
+---
 
-### Sintaxis
+## 1. Las funciones son objetos
+
+En Python, una función es un valor como cualquier otro: se puede guardar en variables, pasar como argumento y devolver de otra función.
+
 ```python
-# Función normal
-def sumar(a, b):
-    return a + b
+def saludar(nombre):
+    return f"Hola {nombre}"
 
-# Equivalente con lambda
-sumar = lambda a, b: a + b
+f = saludar          # guardar la función (sin paréntesis: no la ejecuta)
+print(f("Ana"))      # Hola Ana
 
-print(sumar(5, 3))  # 8
+def aplicar(funcion, valor):   # pasar función como argumento
+    return funcion(valor)
+
+print(aplicar(len, "Python"))   # 6
 ```
 
-### Ejemplos comunes
+Ya lo usaste: `sorted(lista, key=lambda x: x[1])` pasa una función a otra.
+
+## 2. Lambdas: funciones anónimas de una línea
+
 ```python
-# Cuadrado de un número
+doble = lambda x: x * 2
 cuadrado = lambda x: x ** 2
-print(cuadrado(5))  # 25
 
-# Verificar si es par
-es_par = lambda x: x % 2 == 0
-print(es_par(4))  # True
-
-# Concatenar strings
-unir = lambda a, b: f"{a} - {b}"
-print(unir("Hola", "Mundo"))  # Hola - Mundo
+print(doble(5))        # 10
 ```
 
-### Uso con sorted()
+Sintaxis: `lambda parámetros: expresión`. Sin nombre, sin `return` (devuelve la expresión). Regla de estilo: úsalas solo para cosas cortas y de usar y tirar (típicamente como `key=`); si tiene lógica, escribe un `def` con nombre.
+
+## 3. `map` y `filter`
+
 ```python
-personas = [
-    {"nombre": "Juan", "edad": 30},
-    {"nombre": "Ana", "edad": 25},
-    {"nombre": "Carlos", "edad": 35}
-]
+nums = [1, 2, 3, 4, 5]
 
-# Ordenar por edad
-ordenados = sorted(personas, key=lambda p: p['edad'])
-print(ordenados)
-
-# Ordenar por nombre (inverso)
-ordenados_nombre = sorted(personas, key=lambda p: p['nombre'], reverse=True)
+list(map(lambda x: x * 2, nums))        # [2, 4, 6, 8, 10]  (transforma)
+list(filter(lambda x: x % 2 == 0, nums)) # [2, 4]            (filtra)
 ```
 
-## 📚 Funciones de Orden Superior
+Devuelven **iteradores** (por eso el `list(...)`). En la práctica moderna las comprensiones suelen ser más legibles (`[x*2 for x in nums]`), pero `map`/`filter` aparecen mucho en código real y en exámenes.
 
-Funciones que reciben otras funciones como argumentos o retornan funciones.
+## 4. Iteradores y generadores
 
-### Ejemplo básico
+Un **iterador** es un objeto que produce elementos **uno a uno, bajo demanda**, sin tenerlos todos en memoria. `range(1_000_000_000)` no guarda mil millones de números: los genera al vuelo.
+
+Un **generador** es la forma fácil de crear iteradores: una función con `yield` en vez de `return`:
+
 ```python
-def aplicar_operacion(numeros, operacion):
-    """Aplica una operación a cada número"""
-    return [operacion(n) for n in numeros]
+def cuenta_atras(n):
+    while n > 0:
+        yield n        # «entrega» n y se PAUSA aquí, recordando su estado
+        n -= 1
 
-numeros = [1, 2, 3, 4, 5]
-
-resultado_cuadrado = aplicar_operacion(numeros, lambda x: x ** 2)
-print(resultado_cuadrado)  # [1, 4, 9, 16, 25]
-
-resultado_doble = aplicar_operacion(numeros, lambda x: x * 2)
-print(resultado_doble)  # [2, 4, 6, 8, 10]
+for numero in cuenta_atras(3):
+    print(numero)      # 3, 2, 1
 ```
 
-### Función que retorna función
+Diferencia clave: `return` termina la función y olvida todo; `yield` entrega un valor, **congela** la función y la reanuda en la siguiente petición. Esto permite procesar datos infinitos o gigantescos sin llenar la RAM:
+
+```python
+def fibonacci():
+    a, b = 0, 1
+    while True:              # ¡secuencia infinita sin memoria infinita!
+        yield a
+        a, b = b, a + b
+
+fib = fibonacci()
+print([next(fib) for _ in range(10)])   # [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+```
+
+También existen **expresiones generadoras**: `(x**2 for x in range(1000))` — como una comprensión de lista pero perezosa.
+
+## 5. Closures: funciones que recuerdan
+
+Una función interna puede **recordar** las variables de la función externa que la creó:
+
 ```python
 def crear_multiplicador(factor):
-    """Crea una función multiplicadora"""
-    def multiplicar(numero):
-        return numero * factor
+    def multiplicar(x):          # recuerda 'factor' aunque la externa ya terminó
+        return x * factor
     return multiplicar
 
-doble = crear_multiplicador(2)
 triple = crear_multiplicador(3)
-
-print(doble(5))   # 10
-print(triple(5))  # 15
-print(doble(7))   # 14
+print(triple(10))     # 30
 ```
 
-## 🔄 Decoradores
+Es una fábrica de funciones personalizadas. Y es la base de los decoradores.
 
-Los decoradores permiten modificar el comportamiento de funciones sin cambiar su código.
+## 6. Decoradores
 
-### Decorador básico
-```python
-def mi_decorador(funcion_original):
-    def wrapper():
-        print("Antes de ejecutar la función")
-        funcion_original()
-        print("Después de ejecutar la función")
-    return wrapper
+Un **decorador** es una función que envuelve otra función para añadirle comportamiento sin tocar su código:
 
-@mi_decorador
-def saludar():
-    print("¡Hola!")
-
-saludar()
-# Salida:
-# Antes de ejecutar la función
-# ¡Hola!
-# Después de ejecutar la función
-```
-
-### Decorador con argumentos
-```python
-def decorador_con_args(func):
-    def wrapper(*args, **kwargs):
-        print(f"Argumentos: args={args}, kwargs={kwargs}")
-        resultado = func(*args, **kwargs)
-        print(f"Resultado: {resultado}")
-        return resultado
-    return wrapper
-
-@decorador_con_args
-def sumar(a, b):
-    return a + b
-
-sumar(5, 3)
-```
-
-### Decorador para medir tiempo
 ```python
 import time
-from functools import wraps
 
-def medir_tiempo(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
+def cronometro(funcion):
+    def envoltura(*args, **kwargs):
         inicio = time.time()
-        resultado = func(*args, **kwargs)
-        fin = time.time()
-        print(f"{func.__name__} tardó {fin - inicio:.4f} segundos")
+        resultado = funcion(*args, **kwargs)
+        print(f"{funcion.__name__} tardó {time.time() - inicio:.4f}s")
         return resultado
-    return wrapper
+    return envoltura
 
-@medir_tiempo
-def funcion_lenta():
-    time.sleep(2)
-    return "Completado"
+@cronometro            # equivale a: tarea_pesada = cronometro(tarea_pesada)
+def tarea_pesada():
+    return sum(range(10_000_000))
 
-funcion_lenta()
+tarea_pesada()   # ejecuta la función Y además imprime su tiempo
 ```
 
-### Múltiples decoradores
+El `@algo` sobre un `def` es azúcar sintáctico: envuelve la función. Usos reales: medir tiempos, registrar llamadas (logging), comprobar permisos, caché (`@functools.lru_cache`), rutas web en Flask/FastAPI (`@app.get("/")`). Los decoradores están en todas partes en el Python profesional.
+
+Bonus: `@functools.lru_cache` es un decorador de la librería estándar que memoriza resultados — convierte funciones recursivas lentas en instantáneas:
+
 ```python
-def decorador1(func):
-    def wrapper(*args, **kwargs):
-        print("Decorador 1 - antes")
-        resultado = func(*args, **kwargs)
-        print("Decorador 1 - después")
-        return resultado
-    return wrapper
+from functools import lru_cache
 
-def decorador2(func):
-    def wrapper(*args, **kwargs):
-        print("Decorador 2 - antes")
-        resultado = func(*args, **kwargs)
-        print("Decorador 2 - después")
-        return resultado
-    return wrapper
-
-@decorador1
-@decorador2
-def mi_funcion():
-    print("Ejecutando función")
-
-mi_funcion()
-# Salida:
-# Decorador 1 - antes
-# Decorador 2 - antes
-# Ejecutando función
-# Decorador 2 - después
-# Decorador 1 - después
-```
-
-## ⚡ Funciones map, filter, reduce
-
-### map() - Transformar elementos
-```python
-numeros = [1, 2, 3, 4, 5]
-
-# Elevar al cuadrado
-cuadrados = list(map(lambda x: x ** 2, numeros))
-print(cuadrados)  # [1, 4, 9, 16, 25]
-
-# Convertir a string
-strings = list(map(str, numeros))
-print(strings)  # ['1', '2', '3', '4', '5']
-
-# Con múltiples iterables
-lista1 = [1, 2, 3]
-lista2 = [4, 5, 6]
-suma = list(map(lambda x, y: x + y, lista1, lista2))
-print(suma)  # [5, 7, 9]
-```
-
-### filter() - Filtrar elementos
-```python
-numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-# Solo pares
-pares = list(filter(lambda x: x % 2 == 0, numeros))
-print(pares)  # [2, 4, 6, 8, 10]
-
-# Solo mayores a 5
-mayores = list(filter(lambda x: x > 5, numeros))
-print(mayores)  # [6, 7, 8, 9, 10]
-
-# Combinar con map
-pares_al_cubo = list(map(lambda x: x ** 3, filter(lambda x: x % 2 == 0, numeros)))
-print(pares_al_cubo)  # [8, 64, 216, 512, 1000]
-```
-
-### reduce() - Reducir a un valor
-```python
-from functools import reduce
-
-numeros = [1, 2, 3, 4, 5]
-
-# Suma acumulada
-suma = reduce(lambda x, y: x + y, numeros)
-print(suma)  # 15
-
-# Producto acumulado
-producto = reduce(lambda x, y: x * y, numeros)
-print(producto)  # 120
-
-# Máximo valor
-maximo = reduce(lambda x, y: x if x > y else y, numeros)
-print(maximo)  # 5
-
-# Con valor inicial
-suma_con_inicial = reduce(lambda x, y: x + y, numeros, 100)
-print(suma_con_inicial)  # 115
-```
-
-## 📦 Closures (Cierres Léxicos)
-
-Una closure es una función que "recuerda" el ámbito donde fue creada.
-
-### Ejemplo básico
-```python
-def crear_contador():
-    cuenta = 0
-    
-    def contador():
-        nonlocal cuenta
-        cuenta += 1
-        return cuenta
-    
-    return contador
-
-contador1 = crear_contador()
-print(contador1())  # 1
-print(contador1())  # 2
-print(contador1())  # 3
-
-contador2 = crear_contador()
-print(contador2())  # 1 (independiente)
-```
-
-### Closure con configuración
-```python
-def crear_potencia(exponente):
-    def elevar(base):
-        return base ** exponente
-    return elevar
-
-cuadrado = crear_potencia(2)
-cubo = crear_potencia(3)
-
-print(cuadrado(5))  # 25
-print(cubo(5))      # 125
-```
-
-## 🔄 Recursividad Avanzada
-
-### Factorial recursivo
-```python
-def factorial(n):
-    if n == 0 or n == 1:
-        return 1
-    return n * factorial(n - 1)
-
-print(factorial(5))  # 120
-```
-
-### Fibonacci con memoización
-```python
-def fibonacci_memo(n, memo={}):
-    if n in memo:
-        return memo[n]
-    if n <= 1:
+@lru_cache(maxsize=None)
+def fib(n):
+    if n < 2:
         return n
-    
-    memo[n] = fibonacci_memo(n-1, memo) + fibonacci_memo(n-2, memo)
-    return memo[n]
+    return fib(n - 1) + fib(n - 2)
 
-print(fibonacci_memo(50))  # Rápido gracias a memoización
+print(fib(100))   # instantáneo; sin caché tardaría una eternidad
 ```
 
-### Recursividad de cola (Tail Recursion)
-```python
-def factorial_tail(n, acumulador=1):
-    if n == 0:
-        return acumulador
-    return factorial_tail(n - 1, n * acumulador)
+---
 
-print(factorial_tail(5))  # 120
-```
+## ⚠️ Errores típicos
 
-## 🎯 Ejemplos Prácticos
+1. Llamar en vez de pasar: `map(doble(), nums)` ejecuta la función; es `map(doble, nums)`.
+2. Consumir un generador dos veces: una vez recorrido, se agota (`next()` lanza `StopIteration`).
+3. Lambdas con lógica compleja: si necesitas más de una expresión, usa `def`.
+4. Olvidar que un decorador debe **devolver** la envoltura y que la envoltura debe devolver el resultado de la función original.
 
-### Ejemplo 1: Pipeline de procesamiento de datos
-```python
-from functools import reduce
+## 📝 Resumen
 
-datos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+- Las funciones son valores: se guardan, se pasan, se devuelven.
+- `lambda` para funciones cortas anónimas; `map`/`filter` transforman y filtran.
+- Los generadores (`yield`) producen datos bajo demanda sin llenar memoria.
+- Closures = funciones que recuerdan su contexto; decoradores = funciones que envuelven funciones (`@`).
 
-# Pipeline: filtrar pares -> cuadrado -> sumar
-resultado = reduce(
-    lambda x, y: x + y,
-    map(lambda x: x ** 2,
-        filter(lambda x: x % 2 == 0, datos)
-    )
-)
-print(resultado)  # 220
-```
+## 🏋️ Práctica
 
-### Ejemplo 2: Sistema de autenticación con decoradores
-```python
-from functools import wraps
+[![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/GeckCore/VScode/blob/main/leccion14-funciones-avanzadas/practica.ipynb)
 
-def requerir_auth(func):
-    @wraps(func)
-    def wrapper(usuario, *args, **kwargs):
-        if not usuario.get('autenticado'):
-            raise PermissionError("Usuario no autenticado")
-        return func(usuario, *args, **kwargs)
-    return wrapper
+## ➡️ Siguiente paso
 
-def requerir_admin(func):
-    @wraps(func)
-    def wrapper(usuario, *args, **kwargs):
-        if not usuario.get('es_admin'):
-            raise PermissionError("Se requieren privilegios de admin")
-        return func(usuario, *args, **kwargs)
-    return wrapper
-
-@requerir_auth
-@requerir_admin
-def eliminar_usuario(usuario, id_usuario):
-    return f"Usuario {id_usuario} eliminado"
-
-admin = {'autenticado': True, 'es_admin': True}
-print(eliminar_usuario(admin, 123))
-```
-
-### Ejemplo 3: Cache automático con decorador
-```python
-from functools import wraps
-
-def cache(func):
-    memoria = {}
-    
-    @wraps(func)
-    def wrapper(*args):
-        if args in memoria:
-            print(f"Cache hit para {args}")
-            return memoria[args]
-        
-        print(f"Calculando para {args}")
-        resultado = func(*args)
-        memoria[args] = resultado
-        return resultado
-    
-    return wrapper
-
-@cache
-def fibonacci(n):
-    if n <= 1:
-        return n
-    return fibonacci(n-1) + fibonacci(n-2)
-
-print(fibonacci(10))  # Calcula
-print(fibonacci(10))  # Usa cache
-```
-
-## 📝 Ejercicios
-
-### Ejercicio 14.1: Lambda y sorting
-Ordena una lista de tuplas (nombre, edad, ciudad) primero por ciudad y luego por edad usando lambda.
-
-### Ejercicio 14.2: Decorador de reintentos
-Crea un decorador `@reintentar(veces=3)` que reintente ejecutar una función si falla.
-
-### Ejercicio 14.3: Pipeline funcional
-Crea un pipeline que procese textos: convertir a minúsculas → dividir en palabras → filtrar palabras cortas (< 4 letras) → contar frecuencia.
-
-### Ejercicio 14.4: Closure contador múltiple
-Crea una función que retorne tres closures: uno que cuente incrementos, otro decrementos, y otro que retorne el total actual.
-
-### Ejercicio 14.5: Recursividad - Torres de Hanoi
-Implementa la solución recursiva para el problema de las Torres de Hanoi.
-
-## ✅ Soluciones
-
-Las soluciones están en la carpeta `soluciones/solucion_14_*.py`.
-
-## 🔍 Test de Autoevaluación
-
-1. ¿Qué es una función lambda y cuándo es útil?
-2. Explica qué hace un decorador.
-3. ¿Cuál es la diferencia entre map() y filter()?
-4. ¿Qué es una closure y qué problema resuelve?
-5. ¿Qué es la memoización y por qué es importante en recursividad?
-
-## ➡️ Siguiente Lección
-
-Continúa con la [Lección 15: Módulos Estándar Útiles](../leccion15-modulos-estandar/)
+[Lección 15 · Librería estándar](../leccion15-modulos-estandar/)

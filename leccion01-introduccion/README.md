@@ -1,146 +1,131 @@
-# Lección 01: Introducción a Python
+# Lección 1 · Introducción a Python
 
-## 📖 ¿Qué es Python?
+[![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/GeckCore/VScode/blob/main/leccion01-introduccion/practica.ipynb)
 
-Python es un lenguaje de programación interpretado, de alto nivel y de propósito general. Es conocido por:
+## 🎯 Objetivos
 
-- **Sintaxis clara y legible**: Parece pseudocódigo
-- **Multiparadigma**: Soporta programación orientada a objetos, funcional y procedural
-- **Gran comunidad**: Miles de librerías disponibles
-- **Versatilidad**: Web, ciencia de datos, IA, automatización, etc.
+Al terminar esta lección sabrás:
 
-## 🚀 Instalación
+- Qué es Python y por qué se usa tanto
+- Qué es un programa y cómo lo ejecuta el ordenador
+- Escribir y ejecutar tus primeros programas con `print()`
+- Pedir datos al usuario con `input()`
+- Leer mensajes de error sin entrar en pánico
 
-### Windows
-1. Descarga Python desde [python.org](https://www.python.org/downloads/)
-2. Ejecuta el instalador
-3. ✅ Marca "Add Python to PATH"
-4. Haz clic en "Install Now"
+---
 
-### macOS
-```bash
-brew install python3
-```
+## 1. ¿Qué es Python?
 
-### Linux
-```bash
-sudo apt-get install python3 python3-pip
-```
+Python es un **lenguaje de programación**: un idioma con reglas precisas que usamos para darle instrucciones al ordenador. Fue creado por Guido van Rossum en 1991 y hoy es el lenguaje más usado del mundo en inteligencia artificial, ciencia de datos, automatización, desarrollo web y educación.
 
-### Verificar instalación
-```bash
-python --version
-# o
-python3 --version
-```
+¿Por qué es tan popular?
 
-## 💻 Tu Primer Programa
+- **Se lee casi como inglés.** Comparado con C o Java, un programa en Python es corto y claro.
+- **Es de propósito general.** Sirve para webs, juegos, IA, robots, análisis de datos…
+- **Tiene una comunidad gigante.** Casi cualquier problema que tengas ya lo ha resuelto alguien.
 
-Crea un archivo llamado `hola_mundo.py`:
+Python es un lenguaje **interpretado**: un programa llamado *intérprete* lee tu código línea a línea y lo ejecuta al momento. Tú escribes texto en un archivo `.py` (o en una celda de un notebook) y el intérprete hace el resto.
+
+## 2. Tu primer programa: `print()`
+
+La tradición manda empezar así:
 
 ```python
-print("¡Hola, Mundo!")
+print("Hola, mundo")
 ```
 
-Ejecútalo:
-```bash
-python hola_mundo.py
-```
+`print()` es una **función**: una orden ya construida que muestra texto en pantalla. Lo que pones entre paréntesis es lo que quieres mostrar, y el texto va entre comillas:
 
-## 📝 Conceptos Básicos
-
-### Comentarios
 ```python
-# Esto es un comentario de una línea
-
-"""
-Esto es un comentario
-de múltiples líneas
-"""
+print("Me llamo Ana")
+print('También valen comillas simples')
+print(2026)            # los números no necesitan comillas
+print(3 + 4)           # Python calcula antes de mostrar: imprime 7
 ```
 
-### Función print()
-Muestra información en pantalla:
+Puedes mostrar varias cosas separadas por comas (Python las separa con un espacio):
+
 ```python
-print("Hola")
-print("Python", "es", "genial")  # Separa con espacios por defecto
-print("Línea 1\nLínea 2")  # \n crea nueva línea
+print("El resultado de 2 + 2 es", 2 + 2)
 ```
 
-### Función input()
-Recibe datos del usuario:
-```python
-nombre = input("¿Cuál es tu nombre? ")
-print(f"¡Hola {nombre}!")
+Salida:
+
+```
+El resultado de 2 + 2 es 4
 ```
 
-## 🎯 Ejemplos Prácticos
+## 3. Comentarios: notas para humanos
 
-### Ejemplo 1: Saludo personalizado
+Todo lo que va después de `#` en una línea lo ignora el intérprete. Sirve para explicar tu código:
+
 ```python
-# saludo.py
+# Esto es un comentario, Python no lo ejecuta
+print("Hola")  # Los comentarios también pueden ir al final de una línea
+```
+
+Comenta tu código siempre que la intención no sea obvia. Tu «yo del futuro» te lo agradecerá.
+
+## 4. Pedir datos: `input()`
+
+`input()` pausa el programa, muestra un mensaje y espera a que el usuario escriba algo y pulse Enter. Lo que el usuario escribe se guarda en una **variable** (una etiqueta que guarda un valor; la veremos a fondo en la lección 2):
+
+```python
 nombre = input("¿Cómo te llamas? ")
-edad = input("¿Cuántos años tienes? ")
-
-print(f"Hola {nombre}, tienes {edad} años.")
-print("¡Bienvenido al curso de Python!")
+print("Encantado de conocerte,", nombre)
 ```
 
-### Ejemplo 2: Calculadora simple
+⚠️ **Importante**: `input()` **siempre devuelve texto**, aunque el usuario escriba un número:
+
 ```python
-# calculadora.py
-numero1 = float(input("Primer número: "))
-numero2 = float(input("Segundo número: "))
-
-suma = numero1 + numero2
-resta = numero1 - numero2
-multiplicacion = numero1 * numero2
-division = numero1 / numero2
-
-print(f"\nResultados:")
-print(f"Suma: {suma}")
-print(f"Resta: {resta}")
-print(f"Multiplicación: {multiplicacion}")
-print(f"División: {division}")
+edad = input("¿Cuántos años tienes? ")   # si escribes 20, edad guarda el TEXTO "20"
 ```
 
-## 📚 Ejercicios
+Para convertirlo en número hay que usar `int()` o `float()` — eso lo practicarás en la lección 2, pero aquí va un adelanto:
 
-### Ejercicio 1.1: Presentación
-Crea un programa que:
-1. Pida tu nombre
-2. Pida tu ciudad
-3. Pida tu hobby favorito
-4. Muestre: "Hola, soy [nombre], vivo en [ciudad] y me gusta [hobby]"
+```python
+edad = int(input("¿Cuántos años tienes? "))
+print("El año que viene tendrás", edad + 1)
+```
 
-**Archivo**: `ejercicios/ejercicio_01_01.py`
+## 5. Leer errores sin miedo
 
-### Ejercicio 1.2: Conversor de edad
-Crea un programa que:
-1. Pida tu año de nacimiento
-2. Calcule tu edad aproximada
-3. Muestre: "Tienes aproximadamente X años"
+Vas a ver errores constantemente. **No son un fracaso: son el intérprete explicándote qué no entendió.** Un error típico:
 
-**Archivo**: `ejercicios/ejercicio_01_02.py`
+```
+NameError: name 'prin' is not defined
+```
 
-### Ejercicio 1.3: Mensaje creativo
-Crea un programa que muestre un mensaje con formato especial usando saltos de línea y tabulaciones.
+Se lee de abajo arriba: la última línea dice **qué** falló (`NameError`: usaste un nombre que no existe, aquí `prin` en vez de `print`) y las líneas de arriba dicen **dónde**. Otros frecuentes:
 
-**Archivo**: `ejercicios/ejercicio_01_03.py`
+| Error | Significado típico |
+|-------|--------------------|
+| `SyntaxError` | Te faltan comillas, paréntesis o dos puntos |
+| `NameError` | Escribiste mal un nombre o lo usaste antes de crearlo |
+| `TypeError` | Mezclaste tipos incompatibles (texto con número) |
 
-## ✅ Soluciones
+---
 
-Las soluciones están en la carpeta `soluciones/` para que verifiques tus respuestas después de intentar los ejercicios.
+## ⚠️ Errores típicos de esta lección
 
-## 🔍 Test de Autoevaluación
+1. **Olvidar las comillas**: `print(Hola)` falla porque Python cree que `Hola` es una variable. El texto literal siempre va entre comillas.
+2. **Escribir `Print` con mayúscula**: Python distingue mayúsculas y minúsculas. Es `print`.
+3. **Pensar que `input()` devuelve números**: devuelve texto, siempre.
+4. **Asustarse ante un error**: lee la última línea del mensaje primero.
 
-Responde sin mirar el código:
+## 📝 Resumen
 
-1. ¿Qué función se usa para mostrar texto en pantalla?
-2. ¿Qué función se usa para recibir entrada del usuario?
-3. ¿Cómo se escribe un comentario de una línea en Python?
-4. ¿Qué comando se usa para ejecutar un archivo Python?
+- Python es un lenguaje interpretado, claro y multiusos.
+- `print()` muestra cosas en pantalla; `input()` pide datos al usuario (y siempre devuelve texto).
+- Los comentarios empiezan con `#` y no se ejecutan.
+- Los errores se leen de abajo arriba: primero el tipo, luego la línea.
 
-## ➡️ Siguiente Lección
+## 🏋️ Práctica
 
-Continúa con la [Lección 02: Variables y Tipos de Datos](../leccion02-variables-tipos/)
+Abre el notebook y haz los 10 ejercicios en orden: cada uno se autocorrige con ✅.
+
+[![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/GeckCore/VScode/blob/main/leccion01-introduccion/practica.ipynb)
+
+## ➡️ Siguiente paso
+
+[Lección 2 · Variables y tipos de datos](../leccion02-variables-tipos/)
